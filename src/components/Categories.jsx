@@ -4,7 +4,7 @@ import { ArrowLeftOutlined, ArrowRightOutlined } from "@material-ui/icons";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import React from "react";
-import * as actions from "../redux/actions";
+import { getCategoriesRequest } from "../redux/Categories/CategoriesSlice";
 import { categoriesState$ } from "../redux/selectors";
 
 const Container = styled.div`
@@ -52,10 +52,10 @@ const Slide = styled.div`
 const Categories = () => {
   const [slideIndex, setSlideIndex] = useState(0);
   const dispatch = useDispatch();
-  const data = useSelector(categoriesState$);
+  const categories = useSelector(categoriesState$);
 
   React.useEffect(() => {
-    dispatch(actions.getCategories.getCategoriesRequest());
+    dispatch(getCategoriesRequest());
   }, [dispatch]);
 
   const handleClick = (direction) => {
@@ -72,7 +72,7 @@ const Categories = () => {
         <ArrowLeftOutlined />
       </Arrow>
       <Wrapper slideIndex={slideIndex}>
-        {data.map((item) => (
+        {categories.map((item) => (
           <Slide>
             <CategoryItem item={item} key={item.id} />
           </Slide>

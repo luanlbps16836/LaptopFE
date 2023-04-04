@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as actions from "../redux/actions";
 import { authState$ } from "../redux/selectors";
+import { postLoginRequest, postLogout } from "../redux/Auth/AuthSlice";
 
 const Container = styled.div`
   width: 100vw;
@@ -63,18 +63,24 @@ const Login = () => {
     password: "",
   });
   const dispatch = useDispatch();
-  const isLogin = useSelector(authState$);
+  const { isLogin } = useSelector(authState$);
   const navigate = useNavigate();
 
   const onLogin = React.useCallback(() => {
-    dispatch(actions.postLogin.postLoginRequest(data));
+    dispatch(postLoginRequest(data, navigate));
+  }, [data, dispatch, navigate]);
 
-    // if (isLogin) {
-    //   navigate("/");
-    // } else {
-    //   console.log("Login Failed");
-    // }
-  }, [data, dispatch]);
+  const onLogout = React.useCallback(() => {
+    dispatch(postLogout());
+  }, [dispatch]);
+
+  const onAuth = React.useCallback(() => {
+    if (isLogin === false) {
+      onLogin();
+    } else {
+      onLogout();
+    }
+  }, [onLogin, onLogout, isLogin]);
 
   return (
     <Container>
@@ -93,11 +99,23 @@ const Login = () => {
             defaultValue={data.password}
             onChange={(e) => setData({ ...data, password: e.target.value })}
           ></Input>
-          <Button onClick={onLogin}>
-            <Link style={{ color: "white", textDecoration: "none" }}>
-              LOGIN
-            </Link>
-          </Button>
+          <Link
+            onClick={onAuth}
+            // to=""
+            style={{
+              color: "white",
+              textDecoration: "none",
+              width: "20%",
+              border: "none",
+              backgroundColor: "teal",
+              padding: 10,
+              marginBottom: 10,
+              cursor: "pointer",
+              textAlign: "center",
+            }}
+          >
+            {isLogin ? "LOGOUT" : "LOGIN"}
+          </Link>
           <Option>DO NOT YOU REMEMBER THE PASSWORD?</Option>
           <Option>
             <Link to="/register">CREATE A NEW ACCOUNT</Link>

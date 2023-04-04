@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Product from "./Product";
 import { useDispatch, useSelector } from "react-redux";
 import React from "react";
-import * as actions from "../redux/actions";
+import { getProductsRequest } from "../redux/Products/ProductsSlice";
 import { productsState$ } from "../redux/selectors";
 
 const Container = styled.div`
@@ -14,15 +14,15 @@ const Container = styled.div`
 
 const Products = () => {
   const dispatch = useDispatch();
-  const data = useSelector(productsState$);
+  const products = useSelector(productsState$);
 
   React.useEffect(() => {
-    dispatch(actions.getProducts.getProductsRequest());
+    dispatch(getProductsRequest());
   }, [dispatch]);
 
   return (
     <Container>
-      {data.map((item) => (
+      {products.map((item) => (
         <Product item={item} key={item.id} />
       ))}
     </Container>

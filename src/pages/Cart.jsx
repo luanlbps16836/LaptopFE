@@ -2,8 +2,12 @@ import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { Add, Remove } from "@material-ui/icons";
 import { Link } from "react-router-dom";
+import ProductCart from "../components/ProductCart";
+import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { cartsState$ } from "../redux/selectors";
+import { getCartsRequest } from "../redux/Carts/CartsSlice";
 
 const Container = styled.div``;
 
@@ -50,71 +54,6 @@ const Info = styled.div`
   flex: 3;
 `;
 
-const Product = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const ProductDetail = styled.div`
-  flex: 2;
-  display: flex;
-`;
-
-const Image = styled.img`
-  width: 200px;
-`;
-
-const Details = styled.div`
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-`;
-
-const ProductName = styled.span``;
-
-const ProductID = styled.span``;
-
-const ProductColor = styled.div`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: ${(prop) => prop.color};
-`;
-
-const ProductOption = styled.span``;
-
-const PriceDetail = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ProductAmountContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const ProductAmount = styled.div`
-  font-size: 24px;
-  margin: 5px;
-  padding: 0px 15px;
-`;
-
-const ProductPrice = styled.div`
-  font-size: 30px;
-  font-weight: 200;
-`;
-
-const Hr = styled.hr`
-  background-color: #eee;
-  border: none;
-  height: 1px;
-`;
-
 const Summary = styled.div`
   flex: 1;
   border: 0.5px solid lightgray;
@@ -148,6 +87,14 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
+  const dispatch = useDispatch();
+  const data = useSelector(cartsState$);
+  const userId = useSelector(cartsState$.userId);
+
+  React.useEffect(() => {
+    dispatch(getCartsRequest(userId));
+  }, [dispatch, userId]);
+
   return (
     <Container>
       <Announcement />
@@ -170,57 +117,9 @@ const Cart = () => {
         </Top>
         <Bottom>
           <Info>
-            <Product>
-              <ProductDetail>
-                <Image src="https://i.ibb.co/gSHJywf/macbook-air-gold-select-201810-4.webp" />
-                <Details>
-                  <ProductName>
-                    <b>Product:</b>Apple MacBook Air M1 256GB 2020
-                  </ProductName>
-                  <ProductID>
-                    <b>ID: </b>PD00001
-                  </ProductID>
-                  <ProductColor color="black" />
-                  <ProductOption>
-                    <b>Option: </b>16GB & 516GB
-                  </ProductOption>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Remove />
-                  <ProductAmount>1</ProductAmount>
-                  <Add />
-                </ProductAmountContainer>
-                <ProductPrice>19.490.000</ProductPrice>
-              </PriceDetail>
-            </Product>
-            <Hr />
-            <Product>
-              <ProductDetail>
-                <Image src="https://i.ibb.co/MhFzBtS/laptop-asus-vivobook-flip-14-tp470ea-ec346w-3.webp" />
-                <Details>
-                  <ProductName>
-                    <b>Product: </b>Asus Vivobook Flip 14
-                  </ProductName>
-                  <ProductID>
-                    <b>ID:</b>PD00002
-                  </ProductID>
-                  <ProductColor color="black" />
-                  <ProductOption>
-                    <b>Option: </b>16GB & 516GB
-                  </ProductOption>
-                </Details>
-              </ProductDetail>
-              <PriceDetail>
-                <ProductAmountContainer>
-                  <Remove />
-                  <ProductAmount>2</ProductAmount>
-                  <Add />
-                </ProductAmountContainer>
-                <ProductPrice>22.980.000</ProductPrice>
-              </PriceDetail>
-            </Product>
+            {data.map((item) => (
+              <ProductCart item={item} key={item.id} />
+            ))}
           </Info>
           <Summary>
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
